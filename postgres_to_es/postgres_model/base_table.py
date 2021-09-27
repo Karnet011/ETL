@@ -5,7 +5,7 @@ from typing import Generator, List
 from enum import Enum
 from postgres_to_es.es_loader import ESLoader
 from postgres_to_es.postgres_load import PgProducer
-from postgres_to_es.config import VERY_OLD_DATE
+from postgres_to_es.config import OLD_DATE
 from postgres_to_es.state_etl import State
 from postgres_to_es.utils import coroutine
 
@@ -82,7 +82,7 @@ class BaseTable:
     def event_loop(self, generators: List[Generator]):
         while True:
             sync_start_dt = dt.datetime.now()
-            state_value = self.state.get_state(self.state_key) or VERY_OLD_DATE
+            state_value = self.state.get_state(self.state_key) or OLD_DATE
             self.logger.info('Start ETL process for %s: %s', self.state_key, state_value)
             for generator in generators:
                 generator.send(state_value)

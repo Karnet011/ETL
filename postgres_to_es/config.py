@@ -22,4 +22,4 @@ dsn = {'dbname': os.environ.get('POSTGRES_DB'),
        'port': os.environ.get('POSTGRES_PORT')
        }
 
-VERY_OLD_DATE = os.environ.get('VERY_OLD_DATE') or '2019-01-01 00:00:00'
+OLD_DATE = os.environ.get('OLD_DATE') or '2019-01-01 00:00:00'
