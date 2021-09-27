@@ -19,7 +19,7 @@ class FilmWork(BaseTable):
             target.send(transformed)
 
     def etl_process(self):
-        es_target = self.es_loader_coro(self.index)
+        es_target = self.es_loader_coro('movies')
         transform_target = self.transform(es_target)
         enrich_target = self.enrich('''
                                     SELECT fw.id, fw.title, fw.description, fw.rating as imdb_rating,
