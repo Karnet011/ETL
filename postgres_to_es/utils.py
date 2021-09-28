@@ -10,16 +10,16 @@ def backoff(exceptions, logger, total_tries=5, start_sleep_time=1, backoff_facto
             while True:
                 try:
                     return func(*args, **kwargs)
-                except exceptions as e:
+                except exceptions as expt:
                     if _try >= total_tries:
                         logger.error(
                             'Retry: %s/%s. Raise exception with type \'%s\' was raised from function \'%s\'. %s',
-                            _try, total_tries, type(e).__name__, func.__name__, e
+                            _try, total_tries, type(expt).__name__, func.__name__, expt
                         )
                         raise
                     logger.warning(
                         'Retry: %s/%s. Delay: %s Exception with type \'%s\' was raised from function \'%s\'',
-                        _try, total_tries, _delay, type(e).__name__, func.__name__
+                        _try, total_tries, _delay, type(expt).__name__, func.__name__
                     )
                     time.sleep(_delay)
                     _try, _delay = _try + 1, _delay * backoff_factor

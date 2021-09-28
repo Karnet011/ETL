@@ -34,7 +34,6 @@ class ESLoader:
             self._post_to_es(str_query, index_name)
             module_logger.info('post \'%s\' items to elastic search', len(prepared_query))
 
-
     @backoff(Exception, logger=module_logger)
     def _post_to_es(self, query: str, index: str) -> None:
         self.client.bulk(body=query, index=index)
