@@ -1,8 +1,9 @@
 import time
+import logging
 from functools import wraps
 
 
-def backoff(exceptions, logger, total_tries=5, start_sleep_time=1, backoff_factor=2):
+def backoff(exceptions, logger: logging, total_tries: int = 5, start_sleep_time: int = 1, backoff_factor: int = 2):
     def retry_decorator(func):
         @wraps(func)
         def func_with_retry(*args, **kwargs):
@@ -14,7 +15,8 @@ def backoff(exceptions, logger, total_tries=5, start_sleep_time=1, backoff_facto
                     if _try >= total_tries:
                         logger.error(
                             'Retry: %s/%s. Raise exception with type \'%s\' was raised from function \'%s\'. %s',
-                            _try, total_tries, type(elasticsearch_exception).__name__, func.__name__, elasticsearch_exception
+                            _try, total_tries, type(elasticsearch_exception).__name__, func.__name__,
+                            elasticsearch_exception
                         )
                         raise
                     logger.warning(
