@@ -42,20 +42,8 @@ class BaseTable:
         ids = set()
         while True:
             id_list = (yield)
-            # fw_ids_from_person = (yield)
             ids.update(id_list)
             self.logger.info('got \'%s\' film_work ids from person etl', len(id_list))
-
-            fw_ids_from_genre = (yield)
-            ids.update(fw_ids_from_genre)
-            self.logger.info('got \'%s\' film_work ids from genre etl', len(fw_ids_from_genre))
-
-            fw_ids_from_fw = (yield)
-            ids.update(fw_ids_from_fw)
-            self.logger.info('got \'%s\' film_work ids from film_work etl', len(fw_ids_from_fw))
-
-            self.logger.info('total unique film_work ids to update: \'%s\'', len(ids))
-
             if ids:
                 for chanck_rows in self.db_adapter.execute(query, list(ids)):
                     context.extend(chanck_rows)
