@@ -41,9 +41,10 @@ class BaseTable:
         context = []
         ids = set()
         while True:
-            fw_ids_from_person = (yield)
-            ids.update(fw_ids_from_person)
-            self.logger.info('got \'%s\' film_work ids from person etl', len(fw_ids_from_person))
+            id_list = (yield)
+            # fw_ids_from_person = (yield)
+            ids.update(id_list)
+            self.logger.info('got \'%s\' film_work ids from person etl', len(id_list))
 
             fw_ids_from_genre = (yield)
             ids.update(fw_ids_from_genre)
@@ -80,16 +81,6 @@ class BaseTable:
         while rows := (yield):
             self.es_loader.load_to_es(rows, index_name)
 
-
-    # Можно было бы сделать чуть проще используя корутины:
-    # extract = ...
-    # transform(extract)
-    # load(transform)
-    # Этот шаблон больше не актуален, т.к. корутины это чисто инициатива от учеников, т.к. поменялась программа обучения
-    # А как итог получается , что снова гребут под один шаблон и делают его обязательным, хотя этому никто не обучает и нет
-    # в тренажере. В предыдущих группах -это было обязательно. Теперь получается что нужно переписывать весь код с извлечением
-    # потому что в других потоках так было, тогда не нужно было менять программу, т.к. в этом блоке все ждали корутины и с измененем
-    # в программе никто не предупредил видимо ни вас, ни нас
     def event_loop(self, generators: List[Generator]):
         while True:
             sync_start_dt = dt.datetime.now()
@@ -98,5 +89,7 @@ class BaseTable:
             for generator in generators:
                 generator.send(state_value)
             self.state.set_state(self.state_key, str(sync_start_dt))
+            self.db_adapter.close()
             self.logger.info('ETL process is finished.  sleep: %s', 10)
             sleep(10)
+

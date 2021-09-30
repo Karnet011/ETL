@@ -43,12 +43,27 @@ services:
       - ./nginx/site-enable/:/etc/nginx/site-enable/site.conf:ro
       - static_volume:/code/static/
 
-  es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.2
+  ma_es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
     container_name: es01
     environment:
       - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./elasticdb/:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
+
+
+  ma_etl:
+    build: postgres_to_es/
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 30s
+    env_file:
+      - movies_admin/.env
     volumes:
-      - elasticdb:/usr/share/elasticsearch/data
+      - ./postgres_to_es/volumes/etl.log:/sites/*.log:ro
+      - ./postgres_to_es/volumes/PostgresData.txt:/sites/PostgresData.txt:ro

@@ -14,6 +14,7 @@ class FilmWork(BaseTable):
         while result := (yield):
             transformed = []
             for row in result:
+
                 movie = Movie.from_dict({**row})
                 transformed.append(movie)
             target.send(transformed)

@@ -15,7 +15,6 @@ class PgProducer:
         self.chunk_size = chank_size
         self._connection = None
         self._cursor = None
-        self.init()
 
     def cursor(self) -> None:
         if not self._cursor or self._cursor.closed:
@@ -31,6 +30,7 @@ class PgProducer:
 
     @backoff(exceptions=(psycopg2.DatabaseError, psycopg2.OperationalError), logger=module_logger)
     def execute(self, query: str, query_args: Union[List, str]) -> Generator[List[DictRow], None, None]:
+        self.init()
         try:
             if isinstance(query_args, str):
                 query = self._cursor.mogrify(query, (query_args,))
